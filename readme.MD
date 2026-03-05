@@ -1,0 +1,1 @@
+iseng doang, biar paham konsepnya aja
