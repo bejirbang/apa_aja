@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { onMounted, ref } from "vue"
 
 const user = ref(null)
 
@@ -11,7 +11,7 @@ onMounted(async () => {
 
 <template>
   <div>
-    <h2>User Data</h2>
+    <h1>User</h1>
 
     <div v-if="user">
       <p>ID: {{ user.id }}</p>
