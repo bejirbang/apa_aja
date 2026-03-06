@@ -7,17 +7,22 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "grpc:gen": "protoc --proto_path=.. ../proto/user.proto --ts_out=./src/grpc-ts",
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@protobuf-ts/grpcweb-transport": "^2.11.1",
+    "@protobuf-ts/runtime": "^2.11.1",
+    "@protobuf-ts/runtime-rpc": "^2.11.1",
     "vue": "^3.5.29",
     "vue-router": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@protobuf-ts/plugin": "^2.11.1",
     "@vitejs/plugin-vue": "^6.0.4",
     "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.1.8",
