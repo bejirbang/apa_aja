@@ -37,6 +37,19 @@ export interface UserResponse {
      */
     age: number;
 }
+/**
+ * @generated from protobuf message user.CreateUserRequest
+ */
+export interface CreateUserRequest {
+    /**
+     * @generated from protobuf field: string name = 1
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: int32 age = 2
+     */
+    age: number;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class UserRequest$Type extends MessageType<UserRequest> {
     constructor() {
@@ -147,9 +160,65 @@ class UserResponse$Type extends MessageType<UserResponse> {
  * @generated MessageType for protobuf message user.UserResponse
  */
 export const UserResponse = new UserResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateUserRequest$Type extends MessageType<CreateUserRequest> {
+    constructor() {
+        super("user.CreateUserRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "age", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CreateUserRequest>): CreateUserRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.age = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CreateUserRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateUserRequest): CreateUserRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* int32 age */ 2:
+                    message.age = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateUserRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* int32 age = 2; */
+        if (message.age !== 0)
+            writer.tag(2, WireType.Varint).int32(message.age);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message user.CreateUserRequest
+ */
+export const CreateUserRequest = new CreateUserRequest$Type();
 /**
  * @generated ServiceType for protobuf service user.UserService
  */
 export const UserService = new ServiceType("user.UserService", [
-    { name: "GetUser", options: {}, I: UserRequest, O: UserResponse }
+    { name: "GetUser", options: {}, I: UserRequest, O: UserResponse },
+    { name: "CreateUser", options: {}, I: CreateUserRequest, O: UserResponse }
 ]);

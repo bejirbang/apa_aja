@@ -6,6 +6,7 @@ option go_package = "apa_aja/proto";
 
 service UserService {
   rpc GetUser (UserRequest) returns (UserResponse);
+  rpc CreateUser (CreateUserRequest) returns (UserResponse);
 }
 
 message UserRequest {
@@ -16,4 +17,9 @@ message UserResponse {
   int32 id = 1;
   string name = 2;
   int32 age = 3;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  int32 age = 2;
 }

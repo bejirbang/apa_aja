@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 
+	"apa_aja/database"
 	pb "apa_aja/proto"
 
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
@@ -18,19 +19,41 @@ type server struct {
 }
 
 func (s *server) GetUser(ctx context.Context, req *pb.UserRequest) (*pb.UserResponse, error) {
+	db := database.DB
 
-	user := pb.UserResponse{
-		Id:   req.Id,
-		Name: "Budi",
-		Age:  21,
+	var user pb.UserResponse
+	err := db.QueryRow("SELECT id, name, age FROM user WHERE id = ?", req.Id).Scan(&user.Id, &user.Name, &user.Age)
+	if err != nil {
+		return nil, err
 	}
 
-	fmt.Println("Request user ID:", req.Id)
+	fmt.Println("Request user ID:", req.Id, "-> ditemukan")
 
 	return &user, nil
 }
 
+func (s *server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.UserResponse, error) {
+	db := database.DB
+
+	res, err := db.Exec("INSERT INTO user (name, age) VALUES (?, ?)", req.Name, req.Age)
+	if err != nil {
+		return nil, err
+	}
+
+	lastID, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UserResponse{
+		Id:   int32(lastID),
+		Name: req.Name,
+		Age:  req.Age,
+	}, nil
+}
+
 func main() {
+	database.InitDB()
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
