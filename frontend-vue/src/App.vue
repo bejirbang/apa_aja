@@ -1,15 +1,11 @@
-<script setup>
-import User from "./components/User.vue"
-</script>
-
 <template>
   <div class="app-container">
     <div class="card">
-      <h1 class="title">🚀 Microservice Demo</h1>
+      <h1 class="title">ðŸš€ Microservice Demo</h1>
       <p class="subtitle">Contoh implementasi frontend untuk microservice</p>
 
       <div class="user-section">
-        <User />
+        <router-view />
       </div>
     </div>
   </div>
@@ -33,7 +29,7 @@ import User from "./components/User.vue"
   border-radius: 16px;
   width: 600px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* Judul */

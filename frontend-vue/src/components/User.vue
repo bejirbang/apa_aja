@@ -1,16 +1,27 @@
 <script setup>
 import { ref } from "vue"
+import { useRouter } from "vue-router"
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport"
 import { UserServiceClient } from "../grpc-ts/proto/user.client"
+import { clearCurrentUser, clearToken, getAuthMeta, getCurrentUser } from "../auth"
 
 const user = ref(null)
 const searchId = ref("")
 const newUser = ref({ name: "", age: "" })
 const message = ref("")
 const loading = ref(false)
+const currentUser = ref(getCurrentUser())
+const router = useRouter()
 
 const transport = new GrpcWebFetchTransport({ baseUrl: "http://localhost:8080" })
 const client = new UserServiceClient(transport)
+
+const logout = () => {
+  clearToken()
+  clearCurrentUser()
+  currentUser.value = null
+  router.push("/login")
+}
 
 const fetchUser = async () => {
   if (!searchId.value) return
@@ -19,11 +30,14 @@ const fetchUser = async () => {
   user.value = null
 
   try {
-    const call = client.getUser({ id: Number(searchId.value) })
+    const call = client.getUser({ id: Number(searchId.value) }, { meta: getAuthMeta() })
     user.value = await call.response
   } catch (err) {
     console.error(err)
     message.value = "Gagal mengambil user."
+    if (String(err).includes("Unauthenticated")) {
+      logout()
+    }
   } finally {
     loading.value = false
   }
@@ -38,13 +52,16 @@ const createUser = async () => {
     const call = client.createUser({
       name: newUser.value.name,
       age: Number(newUser.value.age),
-    })
+    }, { meta: getAuthMeta() })
     const created = await call.response
     message.value = `User ${created.name} berhasil dibuat dengan ID: ${created.id}`
     newUser.value = { name: "", age: "" }
   } catch (err) {
     console.error(err)
     message.value = "Gagal membuat user."
+    if (String(err).includes("Unauthenticated")) {
+      logout()
+    }
   } finally {
     loading.value = false
   }
@@ -53,6 +70,15 @@ const createUser = async () => {
 
 <template>
   <div class="user-manager">
+    <div v-if="currentUser" class="section auth-section">
+      <div class="result-card">
+        <p><strong>Nama:</strong> {{ currentUser.name }}</p>
+        <p><strong>Email:</strong> {{ currentUser.email }}</p>
+        <button class="btn-logout" @click="logout">Logout</button>
+      </div>
+      <hr />
+    </div>
+
     <div class="section">
       <h3>Cari User</h3>
       <div class="input-group">
@@ -130,6 +156,11 @@ button:disabled {
   width: 100%;
   margin-top: 10px;
   background: #2ecc71;
+}
+
+.btn-logout {
+  margin-top: 10px;
+  background: #ff6b6b;
 }
 
 .result-card {
